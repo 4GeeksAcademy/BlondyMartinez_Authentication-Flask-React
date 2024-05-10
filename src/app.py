@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
-from api.models import db
+from api.models import db, User
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
@@ -66,6 +66,34 @@ def serve_any_other_file(path):
     response = send_from_directory(static_file_dir, path)
     response.cache_control.max_age = 0  # avoid cache memory
     return response
+
+
+@app.route('/users', methods=['GET'])
+def get_users():
+    return [user.serialize() for user in User.query.all()], 200
+
+@app.route('/users', methods=["POST"]) 
+def create_user():
+    data = request.json
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+
+    if not username or not email or not password: return jsonify({'error': 'missing field'}), 400
+
+    existing_user_email = User.query.filter_by(email=email).first()
+    existing_user_username = User.query.filter_by(username=username).first()
+    
+    if existing_user_email and existing_user_username: return jsonify({'error': 'email and username are already in use'}), 400
+    if existing_user_email: return jsonify({'error': 'email is already in use'}), 400
+    if existing_user_username: return jsonify({'error': 'username is already in use'}), 400
+
+    new_user = User(username=username, email=email, password=password)
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify(new_user.serialize()), 201
 
 
 # this only runs if `$ python src/main.py` is executed
