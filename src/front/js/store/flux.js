@@ -9,13 +9,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const config = { 
 					method: "POST",
 					body: JSON.stringify(credentials),
-					headers: { "Accept": "application/json" }
+					headers: { "Content-Type": "application/json" }
 				}
 
 				fetch(process.env.BACKEND_URL + "/login", config)
 				.then((response) => response.json())
-				.then((data) => access_token = data.access_token)
-				.catch((error) => console.error(error, "failed logging in"))
+				.then((data) => setStore({ access_token: data.access_token }))
+				.catch((error) => console.log(error))
 			}
 		}
 	};
