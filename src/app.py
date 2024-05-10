@@ -12,7 +12,7 @@ from api.admin import setup_admin
 from api.commands import setup_commands
 
 from flask_jwt_extended import jwt_required, create_access_token, JWTManager
-
+from flask_cors import CORS
 
 # from models import Person
 
@@ -22,6 +22,7 @@ static_file_dir = os.path.join(os.path.dirname(
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 jwt = JWTManager(app)
+CORS(app)
 
 # database condiguration
 db_url = os.getenv("DATABASE_URL")
