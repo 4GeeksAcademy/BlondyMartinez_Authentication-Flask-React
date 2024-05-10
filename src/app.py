@@ -11,6 +11,9 @@ from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
 
+from flask_jwt_extended import jwt_required, create_access_token, JWTManager
+
+
 # from models import Person
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
@@ -18,6 +21,7 @@ static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
 app.url_map.strict_slashes = False
+jwt = JWTManager(app)
 
 # database condiguration
 db_url = os.getenv("DATABASE_URL")
@@ -82,11 +86,7 @@ def create_user():
     if not username or not email or not password: return jsonify({'error': 'missing field'}), 400
 
     existing_user_email = User.query.filter_by(email=email).first()
-    existing_user_username = User.query.filter_by(username=username).first()
-    
-    if existing_user_email and existing_user_username: return jsonify({'error': 'email and username are already in use'}), 400
     if existing_user_email: return jsonify({'error': 'email is already in use'}), 400
-    if existing_user_username: return jsonify({'error': 'username is already in use'}), 400
 
     new_user = User(username=username, email=email, password=password)
 
@@ -94,6 +94,18 @@ def create_user():
     db.session.commit()
 
     return jsonify(new_user.serialize()), 201
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    email = data.get('email')
+    password = data.get('password')
+
+    user = User.query.filter_by(email=email).first()
+    if not user or user.password != password: return jsonify({ 'Error': 'Invalid email or password.' }), 401
+
+    access_token = create_access_token(identity=email)
+    return jsonify(access_token=access_token), 200
 
 
 # this only runs if `$ python src/main.py` is executed
