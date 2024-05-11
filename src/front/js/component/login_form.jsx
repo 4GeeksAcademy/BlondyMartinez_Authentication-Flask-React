@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext";
 
-const LoginBox = () => {
+const LoginForm = () => {
 	const { actions } = useContext(Context);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -30,4 +30,4 @@ const LoginBox = () => {
     )
 }
 
-export default LoginBox;
+export default LoginForm;
