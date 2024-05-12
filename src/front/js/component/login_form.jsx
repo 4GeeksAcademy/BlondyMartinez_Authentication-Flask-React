@@ -15,19 +15,21 @@ const LoginForm = () => {
     function login(event) {
         event.preventDefault();
         actions.login(email, password);
+        setEmail("");
+        setPassword("");
     }
 
     return (
-        <div className="card col-10">
+        <div className="card">
             <h2>Login</h2>
             <form onSubmit={login}>
                 <div className="form-group">
                     <label htmlFor="exampleInputEmail1">Email address</label>
-                    <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} />
+                    <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
                 <div className="form-group mb-3">
                     <label htmlFor="exampleInputPassword1">Password</label>
-                    <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+                    <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
                 <button type="submit" className="btn btn-primary w-100 mb-3">Log in</button>
             </form>
