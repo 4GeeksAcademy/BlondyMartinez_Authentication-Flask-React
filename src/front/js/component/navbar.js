@@ -16,6 +16,10 @@ export const Navbar = () => {
 					<span className="navbar-brand mb-0 h1">React Boilerplate</span>
 				</Link>
 				<div className="ml-auto">
+					{!store.access_token && 
+					<Link to="/signup">
+						<button className="btn btn-primary">Sign Up</button>
+					</Link>}
 					<Link to="/">
 						<button
 						className="btn btn-primary"
