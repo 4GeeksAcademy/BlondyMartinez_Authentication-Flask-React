@@ -84,10 +84,10 @@ def create_user():
     email = data.get('email')
     password = data.get('password')
 
-    if not username or not email or not password: return jsonify({'error': 'There are missing fields.'}), 400
+    if not username or not email or not password: return jsonify({'Error': 'There are missing fields.'}), 400
 
     existing_user_email = User.query.filter_by(email=email).first()
-    if existing_user_email: return jsonify({'error': 'Email is already in use.'}), 400
+    if existing_user_email: return jsonify({'Error': 'Email is already in use.'}), 400
 
     new_user = User(username=username, email=email, password=password)
 
