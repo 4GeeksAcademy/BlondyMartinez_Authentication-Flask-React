@@ -1,14 +1,19 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../store/appContext";
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
-	const { actions } = useContext(Context);
+	const { store, actions } = useContext(Context);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (store.access_token)  navigate('/logged-in')
+    }, [store.access_token])
 
     function login(event) {
         event.preventDefault();
-        console.log(email, password)
         actions.login(email, password);
     }
 
@@ -24,7 +29,7 @@ const LoginForm = () => {
                     <label htmlFor="exampleInputPassword1">Password</label>
                     <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
                 </div>
-                <button type="submit" className="btn btn-primary w-100 mb-3">Submit</button>
+                <button type="submit" className="btn btn-primary w-100 mb-3">Log in</button>
             </form>
         </div>
     )
