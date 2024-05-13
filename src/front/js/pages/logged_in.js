@@ -1,20 +1,20 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
+import { useNavigate } from "react-router-dom";
 
 export const LoggedIn = () => {
     const { store } = useContext(Context);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!store.access_token)  navigate('/')
+    })
 
 	return (
 		<div className="container text-center mt-3">
-            {store.access_token && 
 			<div className="alert alert-success" role="alert">
                 Successfully logged in.
-            </div>}
-
-            {!store.access_token && 
-            <div className="alert alert-danger" role="alert">
-                Log in to view this page.
-            </div>}
+            </div>
 		</div>
 	);
 };
