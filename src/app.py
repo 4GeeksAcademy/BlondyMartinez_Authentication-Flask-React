@@ -11,7 +11,7 @@ from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
 
-from flask_jwt_extended import jwt_required, create_access_token, JWTManager
+from flask_jwt_extended import jwt_required, create_access_token, JWTManager, get_jwt_identity
 from flask_cors import CORS
 
 # from models import Person
@@ -107,6 +107,12 @@ def login():
 
     access_token = create_access_token(identity=email)
     return jsonify(access_token=access_token), 200
+
+@app.route("/validate-token", methods=["GET"])
+@jwt_required()
+def validate():
+    current_user = get_jwt_identity()
+    return jsonify(valid=bool(current_user)), 200
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
