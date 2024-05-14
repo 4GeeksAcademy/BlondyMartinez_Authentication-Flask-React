@@ -3,18 +3,32 @@ import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
 
 export const LoggedIn = () => {
-    const { store } = useContext(Context);
+    const { store, actions } = useContext(Context);
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!store.access_token)  navigate('/')
-    })
+        const validate = async () => {
+            await actions.validateToken();
+            returnHome();
+        }
+
+        if (store.access_token) validate();
+        else returnHome()
+    }, [])
+
+    function returnHome() {
+        if (!store.access_token || !store.valid_token)  {
+            actions.logout()
+            navigate('/');
+        }
+    }
 
 	return (
 		<div className="container text-center mt-3">
-			<div className="alert alert-success" role="alert">
-                Successfully logged in.
-            </div>
+			{(store.access_token && store.valid_token) &&
+                <div className="alert alert-success" role="alert">
+                    Successfully logged in.
+                </div>}
 		</div>
 	);
 };

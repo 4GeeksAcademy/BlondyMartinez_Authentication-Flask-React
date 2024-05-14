@@ -4,6 +4,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			access_token: "",
 			login_error: "",
 			signup_error: "",
+			valid_token: false,
 		},
 		actions: {
 			login: (email, password) => {
@@ -49,6 +50,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 					} else getActions().login(email, password)
 				})
 				.catch((error) => console.log(error))
+			},
+
+			validateToken: async () => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/validate-token", {
+						method: 'GET',
+						headers: {
+							'Authorization': `Bearer ${getStore().access_token}`
+						}
+					});
+					const data = await response.json();
+					setStore({ valid_token: data.valid });
+					return data.valid; 
+				} catch (error) {
+					console.error(error);
+					return false; 
+				}
 			}
 		}
 	};
